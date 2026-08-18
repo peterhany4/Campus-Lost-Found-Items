@@ -1,5 +1,6 @@
 const express = require("express");
 
+const AppError = require("./utils/AppError");
 const authRouter = require("./Routers/auth.router");
 const userRouter = require("./Routers/user.router");
 
@@ -12,6 +13,37 @@ app.use("/api/users", userRouter);
 
 app.get("/", (req, res) => {
   res.json({ message: "Campus Lost & Found API" });
+});
+
+app.use((req, res, next) => {
+  next(new AppError(404, `Cannot find ${req.originalUrl} on this server`));
+});
+
+app.use((error, req, res, next) => {
+  let err = error;
+
+  if (err.name === "ValidationError") {
+    const message = Object.values(err.errors)
+      .map((e) => e.message)
+      .join("; ");
+    err = new AppError(400, message);
+  } else if (err.code === 11000) {
+    err = new AppError(409, "That email is already registered");
+  } else if (
+    err.name === "JsonWebTokenError" ||
+    err.name === "TokenExpiredError"
+  ) {
+    err = new AppError(401, "Invalid or expired token. Please log in again.");
+  } else if (!err.isOperational) {
+    console.error("UNEXPECTED ERROR:", err);
+    err = new AppError(500, "Something went wrong");
+  }
+
+  res.status(err.statusCode || 500).json({
+    status: err.status || "error",
+    statusCode: err.statusCode || 500,
+    message: err.message,
+  });
 });
 
 module.exports = app;
