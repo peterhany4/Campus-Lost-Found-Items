@@ -1,5 +1,7 @@
 const Item = require("../models/item.model");
 const AppError = require("../utils/AppError");
+const path = require("path");
+const fs = require("fs");
 
 async function createItem(req, res, next) {
   const { title, description, type, category, location } = req.body;
@@ -169,4 +171,59 @@ async function deleteItem(req, res, next) {
   res.status(204).send();
 }
 
-module.exports = { createItem, getAllItems, getItemById, updateItem, deleteItem };
+async function uploadItemImages(req, res, next) {
+  const item = await Item.findById(req.params.id).populate("user", "name email");
+
+  if (!item) {
+    return next(new AppError(404, "Item not found"));
+  }
+
+  if (item.user._id.toString() !== req.user._id.toString()) {
+    return next(new AppError(403, "You are not the owner of this item"));
+  }
+
+  if (!req.files || req.files.length === 0) {
+    return next(new AppError(400, "Please upload at least one image"));
+  }
+
+  const imageUrls = req.files.map(
+    (file) => `/uploads/${file.filename}`
+  );
+
+  item.images.push(...imageUrls);
+
+  await item.save();
+
+  res.status(200).json({ item });
+}
+
+async function deleteItemImage(req, res, next) {
+  const item = await Item.findById(req.params.id).populate("user", "name email");
+
+  if (!item) {
+    return next(new AppError(404, "Item not found"));
+  }
+
+  if (item.user._id.toString() !== req.user._id.toString()) {
+    return next(new AppError(403, "You are not the owner of this item"));
+  }
+
+  const url = `/uploads/${req.params.filename}`;
+
+  if (!item.images.includes(url)) {
+    return next(new AppError(404, "Image not found on this item"));
+  }
+
+  item.images = item.images.filter((img) => img !== url);
+  await item.save();
+
+  try {
+    fs.unlinkSync(path.join("uploads", req.params.filename));
+  } catch (error) {
+    // file already gone from disk — not fatal
+  }
+
+  res.status(200).json({ item });
+}
+
+module.exports = { createItem, getAllItems, getItemById, updateItem, deleteItem, uploadItemImages, deleteItemImage };

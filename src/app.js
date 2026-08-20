@@ -8,6 +8,7 @@ const itemRouter = require("./Routers/item.router");
 const app = express();
 
 app.use(express.json());
+app.use("/uploads", express.static("uploads"));
 
 app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
@@ -36,6 +37,17 @@ app.use((error, req, res, next) => {
     err.name === "TokenExpiredError"
   ) {
     err = new AppError(401, "Invalid or expired token. Please log in again.");
+  } else if (err.name === "MulterError") {
+    if (err.code === "LIMIT_FILE_SIZE") {
+      err = new AppError(400, "File is too large (max 5MB)");
+    } else if (
+      err.code === "LIMIT_FILE_COUNT" ||
+      err.code === "LIMIT_UNEXPECTED_FILE"
+    ) {
+      err = new AppError(400, "Too many files (max 5)");
+    } else {
+      err = new AppError(400, err.message);
+    }
   } else if (err.name === "CastError") {
     err = new AppError(404, "Resource not found");
   } else if (!err.isOperational) {
