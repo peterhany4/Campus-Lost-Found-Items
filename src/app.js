@@ -1,18 +1,28 @@
 const express = require("express");
+const morgan = require("morgan");
 
 const AppError = require("./utils/AppError");
 const authRouter = require("./Routers/auth.router");
 const userRouter = require("./Routers/user.router");
 const itemRouter = require("./Routers/item.router");
+const categoryRouter = require("./Routers/category.router");
+const adminRouter = require("./Routers/admin.router");
 
 const app = express();
 
+app.use(morgan("dev"));
 app.use(express.json());
+app.use((req, res, next) => {
+  req.body = req.body || {};
+  next();
+});
 app.use("/uploads", express.static("uploads"));
 
 app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
 app.use("/api/items", itemRouter);
+app.use("/api/categories", categoryRouter);
+app.use("/api/admin", adminRouter);
 
 app.get("/", (req, res) => {
   res.json({ message: "Campus Lost & Found API" });
@@ -50,6 +60,8 @@ app.use((error, req, res, next) => {
     }
   } else if (err.name === "CastError") {
     err = new AppError(404, "Resource not found");
+  } else if (err.type === "entity.parse.failed") {
+    err = new AppError(400, "Invalid JSON in request body");
   } else if (!err.isOperational) {
     console.error("UNEXPECTED ERROR:", err);
     err = new AppError(500, "Something went wrong");
