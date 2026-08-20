@@ -192,12 +192,9 @@ postman_collection.json        # ready-to-import Postman collection
 
 ---
 
-## Work Division
+## Team Plan
 
-Built by a team of five, each responsible for one part:
-
-1. Authentication & Users
-2. Lost & Found Items
-3. Search, Filtering & Pagination
-4. Image & File Management
-5. Administration & System Quality
+The detailed division of work lives in `plans/` (kept private). The
+project was split into five parts: Authentication & Users · Items ·
+Search/Filtering/Pagination · Image management · Administration &
+System Quality.

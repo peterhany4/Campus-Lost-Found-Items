@@ -1,9 +1,7 @@
 const express = require("express");
 const morgan = require("morgan");
-const swaggerUi = require("swagger-ui-express");
 
 const AppError = require("./utils/AppError");
-const { swaggerSpec } = require("./utils/swagger");
 const authRouter = require("./Routers/auth.router");
 const userRouter = require("./Routers/user.router");
 const itemRouter = require("./Routers/item.router");
@@ -25,8 +23,6 @@ app.use("/api/users", userRouter);
 app.use("/api/items", itemRouter);
 app.use("/api/categories", categoryRouter);
 app.use("/api/admin", adminRouter);
-
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.get("/", (req, res) => {
   res.json({ message: "Campus Lost & Found API" });
