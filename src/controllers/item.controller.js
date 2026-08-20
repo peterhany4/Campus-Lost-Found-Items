@@ -111,7 +111,7 @@ async function getAllItems(req, res, next) {
   const totalPages = Math.ceil(total / limit);
 
   res.status(200).json({
-    count: total,
+    count: items.length,
     items,
     page,
     limit,
