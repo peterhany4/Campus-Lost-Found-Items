@@ -3,6 +3,7 @@ const express = require("express");
 const AppError = require("./utils/AppError");
 const authRouter = require("./Routers/auth.router");
 const userRouter = require("./Routers/user.router");
+const itemRouter = require("./Routers/item.router");
 
 const app = express();
 
@@ -10,6 +11,7 @@ app.use(express.json());
 
 app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
+app.use("/api/items", itemRouter);
 
 app.get("/", (req, res) => {
   res.json({ message: "Campus Lost & Found API" });
@@ -34,6 +36,8 @@ app.use((error, req, res, next) => {
     err.name === "TokenExpiredError"
   ) {
     err = new AppError(401, "Invalid or expired token. Please log in again.");
+  } else if (err.name === "CastError") {
+    err = new AppError(404, "Resource not found");
   } else if (!err.isOperational) {
     console.error("UNEXPECTED ERROR:", err);
     err = new AppError(500, "Something went wrong");
