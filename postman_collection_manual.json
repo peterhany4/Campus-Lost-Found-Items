@@ -1,0 +1,198 @@
+{
+  "info": {
+    "name": "Campus Lost & Found API - Manual",
+    "description": "Endpoints only. No variables. Paste the token manually into Authorization headers when needed.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "http://localhost:6000/api/auth/register",
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"New Student\",\n  \"email\": \"new@uni.edu\",\n  \"password\": \"password123\"\n}" }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "http://localhost:6000/api/auth/login",
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"admin@uni.edu\",\n  \"password\": \"adminpass123\"\n}" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get my profile",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer <paste token here>" }],
+            "url": "http://localhost:6000/api/users/me"
+          }
+        },
+        {
+          "name": "Update my name",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer <paste token here>" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "http://localhost:6000/api/users/me",
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"New Name\"\n}" }
+          }
+        },
+        {
+          "name": "List all users (admin)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer <paste token here>" }],
+            "url": "http://localhost:6000/api/users"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Items",
+      "item": [
+        {
+          "name": "Create item",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer <paste token here>" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "http://localhost:6000/api/items",
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"Samsung phone\",\n  \"description\": \"Black phone, cracked back\",\n  \"type\": \"lost\",\n  \"category\": \"electronics\",\n  \"location\": \"Main Library\"\n}" }
+          }
+        },
+        { "name": "List all items", "request": { "method": "GET", "header": [], "url": "http://localhost:6000/api/items" } },
+        { "name": "Search & filter items", "request": { "method": "GET", "header": [], "url": "http://localhost:6000/api/items?title=phone&type=lost&status=ACTIVE&page=1&limit=10" } },
+        { "name": "Get one item", "request": { "method": "GET", "header": [], "url": "http://localhost:6000/api/items/REPLACE_WITH_ITEM_ID" } },
+        {
+          "name": "Update item",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer <paste token here>" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "http://localhost:6000/api/items/REPLACE_WITH_ITEM_ID",
+            "body": { "mode": "raw", "raw": "{\n  \"description\": \"Updated description\",\n  \"status\": \"RECOVERED\"\n}" }
+          }
+        },
+        {
+          "name": "Delete item",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer <paste token here>" }],
+            "url": "http://localhost:6000/api/items/REPLACE_WITH_ITEM_ID"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Images",
+      "item": [
+        {
+          "name": "Upload images (form-data field: images)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer <paste token here>" }],
+            "url": "http://localhost:6000/api/items/REPLACE_WITH_ITEM_ID/images",
+            "body": { "mode": "formdata", "formdata": [{ "key": "images", "type": "file" }] }
+          }
+        },
+        {
+          "name": "Delete an image",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer <paste token here>" }],
+            "url": "http://localhost:6000/api/items/REPLACE_WITH_ITEM_ID/images/REPLACE_WITH_FILENAME"
+          }
+        },
+        { "name": "View an image", "request": { "method": "GET", "header": [], "url": "http://localhost:6000/uploads/REPLACE_WITH_FILENAME" } }
+      ]
+    },
+    {
+      "name": "Categories",
+      "item": [
+        { "name": "List categories", "request": { "method": "GET", "header": [], "url": "http://localhost:6000/api/categories" } },
+        {
+          "name": "Create category (admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer <paste admin token here>" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "http://localhost:6000/api/categories",
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"electronics\"\n}" }
+          }
+        },
+        {
+          "name": "Rename category (admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer <paste admin token here>" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "http://localhost:6000/api/categories/REPLACE_WITH_CATEGORY_ID",
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Electronics\"\n}" }
+          }
+        },
+        {
+          "name": "Delete category (admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer <paste admin token here>" }],
+            "url": "http://localhost:6000/api/categories/REPLACE_WITH_CATEGORY_ID"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        { "name": "Get user by id", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer <paste admin token here>" }], "url": "http://localhost:6000/api/admin/users/REPLACE_WITH_USER_ID" } },
+        {
+          "name": "Change user role",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer <paste admin token here>" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "http://localhost:6000/api/admin/users/REPLACE_WITH_USER_ID/role",
+            "body": { "mode": "raw", "raw": "{\n  \"role\": \"admin\"\n}" }
+          }
+        },
+        { "name": "Delete user", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer <paste admin token here>" }], "url": "http://localhost:6000/api/admin/users/REPLACE_WITH_USER_ID" } },
+        { "name": "Delete any item", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer <paste admin token here>" }], "url": "http://localhost:6000/api/admin/items/REPLACE_WITH_ITEM_ID" } },
+        {
+          "name": "Force item status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer <paste admin token here>" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "http://localhost:6000/api/admin/items/REPLACE_WITH_ITEM_ID/status",
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"RECOVERED\"\n}" }
+          }
+        }
+      ]
+    }
+  ]
+}
